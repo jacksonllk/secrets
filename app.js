@@ -16,8 +16,8 @@ app.use(
 mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true });
 
 const userSchema = {
-  email: string,
-  password: string,
+  email: String,
+  password: String,
 };
 
 const User = new mongoose.model("User", userSchema);
@@ -44,10 +44,29 @@ app.post("/register", function (req, res) {
     if (err) {
       console.log(err);
     } else {
-      res.send("secrets");
+      res.render("secrets");
     }
   });
 });
+
+app.post("/login", function (req, res){
+    const username = req.body.username;
+    const password = req.body.password;
+
+    User.findOne({email: username}, function (err, foundUser){
+        if (err) {
+            console.log(err);
+        } else {
+            if (foundUser){
+                if(foundUser.password === password){
+                    res.render("secrets");
+                };
+            };
+        };
+    });
+
+
+})
 
 app.listen(3000, function () {
   console.log("Server started on port 3000");
